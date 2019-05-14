@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+# from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from matplotlib import colors, animation
 
@@ -15,32 +15,33 @@ class PolyVisualiser:
         self.__line_ani = None
 
     def add_seeds(self, points):
-
+        # print(tuple(points))
         self.__ax.scatter(
             points[0], points[1], points[2],
-            c='b',
+            c=tuple(points),
             marker='o',
             alpha=1
         )
 
-    def add_cell(self, vertex=True, faces=True):
+    def add_cell(self, seeds=True, vertex=True, faces=True):
         for p in self.__array_polygons:
             vertices = p.vertex
             face = p.faces
             color = p.color
             seed = p.seed
-            self.add_seeds(seed)
+            if seeds:
+                self.add_seeds(seed)
             if vertex:
-                self.add_vertex(vertices)
+                self.add_vertex(vertices, color)
             if faces:
                 self.add_faces(vertices, face, color)
 
-    def add_vertex(self, vertices):
+    def add_vertex(self, vertices, color):
         self.__ax.scatter(
             vertices[0], vertices[1], vertices[2],
-            c='k',
+            c=color,
             marker='.',
-            alpha=0
+            alpha=1
         )
 
     def add_faces(self, vertices, faces, color):
@@ -65,8 +66,8 @@ class PolyVisualiser:
 
     def update_lines(self, num):
         p = self.__array_polygons[num]
-        self.add_seeds(p.seed)
-        self.add_vertex(p.vertex)
+        # self.add_seeds(p.seed)
+        self.add_vertex(p.vertex, p.color)
         self.add_faces(p.vertex, p.faces, p.color)
 
     def animate(self):
@@ -74,7 +75,7 @@ class PolyVisualiser:
         self.__line_ani = animation.FuncAnimation(fig=self.__fig,
                                                   func=self.update_lines,
                                                   frames=frames,
-                                                  interval=1000,
+                                                  interval=300,
                                                   repeat=False
                                                   )
 
