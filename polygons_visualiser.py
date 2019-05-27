@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-# from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from matplotlib import colors, animation
 
@@ -13,6 +12,8 @@ class PolyVisualiser:
         self.__fig = plt.figure(figsize=(10, 6.5))
         self.__ax = self.__fig.add_subplot(111, projection='3d', aspect='equal')
         self.__line_ani = None
+        cube_vertex = [(0, 5, 0, 5, 0, 5, 0, 5), (0, 0, 5, 5, 0, 0, 5, 5), (0, 0, 0, 0, 5, 5, 5, 5)]
+        self.add_vertex(vertices=cube_vertex)
 
     def add_seeds(self, points):
         # print(tuple(points))
@@ -36,12 +37,12 @@ class PolyVisualiser:
             if faces:
                 self.add_faces(vertices, face, color)
 
-    def add_vertex(self, vertices, color):
+    def add_vertex(self, vertices, color='w'):
         self.__ax.scatter(
             vertices[0], vertices[1], vertices[2],
             c=color,
             marker='.',
-            alpha=1
+            alpha=0
         )
 
     def add_faces(self, vertices, faces, color):
@@ -71,11 +72,11 @@ class PolyVisualiser:
         self.add_faces(p.vertex, p.faces, p.color)
 
     def animate(self):
-        frames = len(self.__array_polygons)
+        num_frames = len(self.__array_polygons)
         self.__line_ani = animation.FuncAnimation(fig=self.__fig,
                                                   func=self.update_lines,
-                                                  frames=frames,
-                                                  interval=300,
+                                                  frames=num_frames,
+                                                  interval=200,
                                                   repeat=False
                                                   )
 
