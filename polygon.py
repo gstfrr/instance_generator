@@ -1,43 +1,15 @@
 import numpy as np
-import pywavefront
 
 
 class Polygon:
-    def __init__(self, seed, vertex, faces, color=None,volume=0):
+    def __init__(self, seed, vertex, faces, color=None, volume=0):
         self.__seed = seed
         self.__vertex = vertex
         self.__faces = faces
-        self.__color = color
+        self.__color = tuple(color)
         self.__volume = volume
 
-    @staticmethod
-    def load_polygons_from_file(obj_file):
-        scene = pywavefront.Wavefront(obj_file, collect_faces=True)
-        scene.parse()
-
-        print(len(scene.vertices))
-
-        print('# of objects:\t', len(scene.mesh_list))  # list of objects
-        print('# of faces:\t', len(scene.mesh_list[0].faces))  # list of objects
-        print(scene.mesh_list[0].faces)
-        print(scene.vertices)
-
-        # p = Polygon(seed=seed,
-        #             vertex=vertex,
-        #             faces=faces,
-        #             color=color,
-        #             )
-        # return p
-
-    @staticmethod
-    def change_position(v_tuple, offset):
-        coordinate_list = []
-        for i in range(len(v_tuple)):
-            coordinate_list.append(v_tuple[i] + offset)
-        return tuple(coordinate_list)
-
     def rotate(self, alpha, beta):
-        # alpha, beta = np.pi, np.pi
 
         rotation_z = np.array([[np.cos(alpha), -1 * np.sin(alpha), 0],
                                [np.sin(alpha), np.cos(alpha), 0],
@@ -60,19 +32,23 @@ class Polygon:
 
         self.__vertex = new_v
 
+    @staticmethod
+    def change_position(v_tuple, offset):
+        coordinate_list = []
+        for i in range(len(v_tuple)):
+            coordinate_list.append(v_tuple[i] + offset)
+        return tuple(coordinate_list)
+
     def change_vertex(self, offset):
-        print(self.__vertex)
         vertex_list = []
-        for v in self.__vertex:
-            # print(v)
-            a = self.change_position(v, offset)
+        for key, v in enumerate(self.__vertex):
+            a = self.change_position(v, offset[key])
             vertex_list.append(a)
 
         self.__vertex = vertex_list
 
     def move_to_origin(self):
         minimo = np.array([min(self.vertex[0]), min(self.vertex[1]), min(self.vertex[2])])
-        # print('Minimo:   ',minimo)
 
         v = self.vertex
 
