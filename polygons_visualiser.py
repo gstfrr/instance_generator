@@ -1,18 +1,28 @@
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d.art3d import Poly3DCollection
-from matplotlib import colors, animation
-from matplotlib.widgets import Button, Slider, TextBox
 import numpy as np
+from matplotlib import animation
+import matplotlib.pyplot as plt
+from matplotlib.widgets import Button, Slider, TextBox
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
 
 class PolyVisualiser:
-    def __init__(self, array_polygons, x_lim, y_lim, z_lim, obj=0):
+    """
+        Construtor da Classe
+        :param array_polygons: lista de polígonos a serem exibidos (Retângulos ou Polígonos)
+        :param x_lim: máxima largura da área de visualização.
+        :param y_lim: máxima comprimento da área de visualização.
+        :param z_lim: máxima altura da área de visualização.
+        :param obj: (opcional) Valor da função objetivo a ser exibido.
+    """
+
+    def __init__(self, array_polygons, x_lim, y_lim, z_lim, obj=0,alpha=.5):
         self.__array_polygons = array_polygons
         self.__x_lim = x_lim
         self.__y_lim = y_lim
         self.__z_lim = z_lim
         self.__obj = obj
-        self.__fig = plt.figure(figsize=(10, 6.5))
+        self.__fig = plt.figure(figsize=(9, 6.5))
+        self.alpha = alpha
         self.__line_ani = None
 
         self.__sfreq = None
@@ -21,7 +31,7 @@ class PolyVisualiser:
 
         self.__ax = self.__fig.add_subplot(111,
                                            projection='3d',
-                                           # aspect='equal'
+                                           aspect='auto'
                                            )
 
         self.new_scene()
@@ -41,11 +51,11 @@ class PolyVisualiser:
         for p in self.__array_polygons:
             min_z = min(p.vertex[2])
             a = np.array(list(p.vertex[2])) + (min_z * freq)
-            print(a)
+            # print(a)
 
             p.vertex[2] = tuple(a)
 
-        self.add_cell(vertex=False, faces=True, seeds=False)
+        self.add_cell(vertex=False, faces=True)
 
     def reset(self, event):
         pass
@@ -64,23 +74,11 @@ class PolyVisualiser:
         self.__button.on_clicked(self.reset)
         self.__text_box.on_submit(None)
 
-    def add_seeds(self, points):
-        # print(tuple(points))
-        self.__ax.scatter(
-            points[0], points[1], points[2],
-            c=tuple(points),
-            marker='o',
-            alpha=1
-        )
-
-    def add_cell(self, seeds=False, vertex=False, faces=True):
+    def add_cell(self, vertex=False, faces=True):
         for p in self.__array_polygons:
             vertices = p.vertex
             face = p.faces
             color = p.color
-            seed = p.seed
-            if seeds:
-                self.add_seeds(seed)
             if vertex:
                 self.add_vertex(vertices, color)
             if faces:
@@ -104,23 +102,24 @@ class PolyVisualiser:
 
     def new_face(self, augusto, color):
         augusto = [*zip(*augusto)]
-        x = augusto[0]
-        y = augusto[1]
-        z = augusto[2]
+        x, y, z = augusto
         verts2 = [list(zip(x, y, z))]
-        collection = Poly3DCollection(verts2, alpha=0.2)
+        collection = Poly3DCollection(verts2, alpha=self.alpha)
         collection.set_facecolor(color)
-        collection.set_edgecolor(color)
-        self.__ax.add_collection3d(collection, zs='z')
+        collection.set_edgecolor('k')
+        self.__ax.add_collection3d(collection, zs=0, zdir='z')
         return None
 
     def update_lines(self, num):
         p = self.__array_polygons[num]
-        # self.add_seeds(p.seed)
-        self.add_vertex(p.vertex, p.color)
+        # self.add_vertex(p.vertex, p.color)
         self.add_faces(p.vertex, p.faces, p.color)
 
-    def animate(self):
+    def animate(self, no_animation=False):
+        if no_animation:
+            self.add_cell()
+            return
+
         num_frames = len(self.__array_polygons)
         self.__line_ani = animation.FuncAnimation(fig=self.__fig,
                                                   func=self.update_lines,
