@@ -1,0 +1,5 @@
+__pycache__
+.idea
+gurobi.log
+problema*
+resultado*
