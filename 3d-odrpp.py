@@ -5,28 +5,32 @@ from time import time
 import sys
 
 
-def get_data(datafile: str) -> list:
+def get_data(datafile):
     filename = datafile
     file_open_list = open(filename, 'r')
 
     boxes = []
     for line in file_open_list:
         b = [int(i) for i in line.split(sep='\t')]
-        # dim = list(permutations(b[1:4]))
+        boxes.append(b)
+
+    Lu, Wu, Hu = boxes[-1][0], boxes[-1][1], boxes[-1][2]
+    boxes.pop()
+
+    boxes2 = []
+    for b in boxes:
         dim = b[1:4]
         b = {'type': b[0],
              'dim': dim,
              'qtd': b[4]}
-        # for i in range(num):
-        boxes.append(b)
+        boxes2.append(b)
 
-    return boxes
+    return boxes2, Lu, Wu, Hu
 
 
 def main(instancia):
-    Lu, Wu, Hu = 10, 10, 10
+    boxes, Lu, Wu, Hu = get_data(instancia)
     container = [Lu, Wu, Hu]
-    boxes = get_data(instancia)
     ret = []
     for b in boxes:
         color_i = np.random.rand(1, 3)
