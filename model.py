@@ -181,7 +181,7 @@ def main(instance):
 
     if m.status == GRB.Status.OPTIMAL:
         m.write('results/resultado_' + filename + '.sol')
-
+        print('Container: ', Lu, Wu, Hu, sep='\t')
         print('\nFunção objetivo: ', str(round(L.X)), str(round(W.X)), str(round(W.X)), sep='\t')
 
         # Recupera as posições das caixas
@@ -230,7 +230,7 @@ def main(instance):
 
 if __name__ == "__main__":
     instancia = sys.argv[1]
-    # instancia = 'instances/problema2.data'
+    # instancia = 'instances/problema1.data'
     nome_saida = 'results/saida_model_' + instancia.replace('.data', '')
     nome_saida = nome_saida.replace('instances/', '')
     sys.stdout = open(nome_saida + '.txt', "w")
