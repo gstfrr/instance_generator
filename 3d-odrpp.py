@@ -38,6 +38,7 @@ def main(instancia):
             ret.append(Retangulo(b.get('dim'), color=color_i))
 
     ret, obj = optimize(ret, container)
+    print('Dimensoes: ', Lu, Wu, Hu)
     print('Função objetivo: ' + str(obj))
 
     # visualiser = PolyVisualiser(array_polygons=ret,
