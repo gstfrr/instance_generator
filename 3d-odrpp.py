@@ -1,5 +1,5 @@
 from bottom__front_left import *
-from polygons_visualiser import PolyVisualiser
+# from polygons_visualiser import PolyVisualiser
 from retangulo import Retangulo
 from time import time
 import sys
