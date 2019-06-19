@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-
+import pickle
 import platform
-from polygons_visualiser import PolyVisualiser
+# from polygons_visualiser import PolyVisualiser
 from retangulo import Retangulo
 from itertools import permutations
 import numpy as np
@@ -28,17 +28,14 @@ def get_data(datafile: str) -> list:
 
 def main():
     print("Server: " + str(platform.node()) + "\n")
+    Lu, Wu, Hu = 10, 10, 10
+    container = [Lu, Wu, Hu]
 
     # Obtem os valores do arquivo e cria os retângulos
-    filename = 'problema0.data'
+    filename = 'problema1.data'
     boxes = get_data(filename)
     filename = filename.replace('.data', '', 1)
-
-    ret = []
-    for b in boxes:
-        color_b = np.random.rand(1, 3)
-        for i in range(b.get('qtd')):
-            ret.append(Retangulo(b.get('dim'), color=color_b))
+    print(filename)
 
     # Cria os conjuntos X,Y,Z
     BigX, BigY, BigZ = [], [], []
@@ -63,9 +60,6 @@ def main():
     BigZ = [i for i in range(sum(BigZ))]
 
     # print(BigX, BigY, BigZ, sep='\n')
-
-    Lu, Wu, Hu = 10, 10, 10
-    container = [Lu, Wu, Hu]
 
     m = Model("3D-ODRPP")
     m.setParam('TimeLimit', 50 * 60.0)
@@ -97,75 +91,86 @@ def main():
     # Criação das variáveis binárias
     x_bin = []
     for i, box in enumerate(boxes):
-        p_list = []
-        for p in X[i]:
-            q_list = []
-            for q in Y[i]:
-                r_list = []
-                for r in Z[i]:
-                    index = '[' + str(i) + '][' + str(p) + '][' + str(q) + '][' + str(r) + ']'
-                    x = m.addVar(vtype=GRB.BINARY, name='X_' + index)
-                    r_list.append(x)
-                q_list.append(r_list)
-            p_list.append(q_list)
-        x_bin.append(p_list)
+        rotations = list(permutations(box.get('dim')))
+        # print(box.get('dim'), rotations, sep='\t')
+        k_list = []
+        for k, b in enumerate(rotations):
+            p_list = []
+            for p in X[i]:
+                q_list = []
+                for q in Y[i]:
+                    r_list = []
+                    for r in Z[i]:
+                        index = '[' + str(i) + '][' + str(k) + '][' + str(p) + '][' + str(q) + '][' + str(r) + ']'
+                        x = m.addVar(vtype=GRB.BINARY, name='X_' + index)
+                        r_list.append(x)
+                    q_list.append(r_list)
+                p_list.append(q_list)
+            k_list.append(p_list)
+        x_bin.append(k_list)
 
-    print(' = Variáveis criadas')
+    print(' = Variables Added')
 
-    # Restrição 2
+    # Constraint 2
     for s in BigX:
         for t in BigY:
             for u in BigZ:
 
                 soma_r2 = LinExpr()
                 for i, box in enumerate(boxes, start=0):
-                    li, wi, hi = box.get('dim')[0], box.get('dim')[1], box.get('dim')[2]
-                    for p in X[i]:
-                        for q in Y[i]:
-                            for r in Z[i]:
+                    rotations = list(permutations(box.get('dim')))
+                    for k, b in enumerate(rotations):
+                        li, wi, hi = b[0], b[1], b[2]
+                        for p in X[i]:
+                            for q in Y[i]:
+                                for r in Z[i]:
 
-                                if s - li + 1 <= p <= s:
-                                    if t - wi + 1 <= q <= t:
-                                        if u - hi + 1 <= r <= u:
-                                            soma_r2 += x_bin[i][p][q][r]
+                                    if s - li + 1 <= p <= s:
+                                        if t - wi + 1 <= q <= t:
+                                            if u - hi + 1 <= r <= u:
+                                                soma_r2 += x_bin[i][k][p][q][r]
 
-                # index = str(i)
+                    # index = str(i)
                 index = '[' + str(s) + '][' + str(t) + '][' + str(u) + ']'
                 m.addConstr(soma_r2 <= 1, name='Restricao2_' + index)
 
-    print(' = Restrição 2 adicionada')
+    print(' = Constraint 2 adicionada')
 
-    # Restrição 3
+    # Constraint 3
     for j, box in enumerate(boxes, start=0):
         bj = box.get('qtd')
         soma_r3 = LinExpr()
-        for p in X[j]:
-            for q in Y[j]:
-                for r in Z[j]:
-                    soma_r3 += x_bin[j][p][q][r]
+        rotations = list(permutations(box.get('dim')))
+        for k, b in enumerate(rotations):
+            for p in X[j]:
+                for q in Y[j]:
+                    for r in Z[j]:
+                        soma_r3 += x_bin[j][k][p][q][r]
         m.addConstr(soma_r3 == bj, name='Restricao3_' + str(j))
 
-    print(' = Restrição 3 adicionada')
+    print(' = Constraint 3 adicionada')
 
     # Restrições 4, 5 e 6
     for i, box in enumerate(boxes, start=0):
-        for p in X[i]:
-            for q in Y[i]:
-                for r in Z[i]:
-                    index = '[' + str(i) + '][' + str(p) + '][' + str(q) + '][' + str(r) + ']'
-                    li, wi, hi = box.get('dim')[0], box.get('dim')[1], box.get('dim')[2]
-                    algo_p = (p + li) * x_bin[i][p][q][r]
-                    algo_q = (q + wi) * x_bin[i][p][q][r]
-                    algo_r = (r + hi) * x_bin[i][p][q][r]
-                    m.addConstr(algo_p <= L, name='Restricao4_' + index)
-                    m.addConstr(algo_q <= W, name='Restricao5_' + index)
-                    m.addConstr(algo_r <= H, name='Restricao6_' + index)
+        rotations = list(permutations(box.get('dim')))
+        for k, b in enumerate(rotations):
+            for p in X[i]:
+                for q in Y[i]:
+                    for r in Z[i]:
+                        index = '[' + str(i) + '][' + str(k) + '][' + str(p) + '][' + str(q) + '][' + str(r) + ']'
+                        li, wi, hi = b[0], b[1], b[2]
+                        algo_p = (p + li) * x_bin[i][k][p][q][r]
+                        algo_q = (q + wi) * x_bin[i][k][p][q][r]
+                        algo_r = (r + hi) * x_bin[i][k][p][q][r]
+                        m.addConstr(algo_p <= L, name='Restricao4_' + index)
+                        m.addConstr(algo_q <= W, name='Restricao5_' + index)
+                        m.addConstr(algo_r <= H, name='Restricao6_' + index)
 
     print(' = Restrições 4,5,6 adicionadas')
 
     m.write('modelo_' + filename + '.lp')
     print(' = Model written!')
-    m.optimize()
+    # m.optimize()
 
     if m.status == GRB.Status.OPTIMAL:
         m.write('resultado_' + filename + '.sol')
@@ -175,28 +180,45 @@ def main():
         # Recupera as posições das caixas
         solutions = []
         for i, box in enumerate(boxes, start=0):
-            for p in X[i]:
-                for q in Y[i]:
-                    for r in Z[i]:
-                        if x_bin[i][p][q][r].X == 1:
-                            solutions.append([i, (p, q, r)])
+            sol_box = []
+            for k in range(6):
+                for p in X[i]:
+                    for q in Y[i]:
+                        for r in Z[i]:
+                            if x_bin[i][k][p][q][r].X == 1:
+                                sol_box.append([i, (p, q, r), k])
+            solutions.append(sol_box)
 
-        # Aplica a soluções aos retângulos conhecidos
-        for i, r in enumerate(ret):
-            print(solutions[i])
-            r.change_vertex(list(solutions[i][1]))
+        # solutions = [[[0, (3, 0, 0), 0], [0, (4, 0, 0), 0]], [[1, (0, 0, 0), 1], [1, (0, 3, 0), 1]],
+        #              [[2, (1, 0, 4), 2], [2, (2, 0, 4), 4]], [[3, (1, 1, 5), 1], [3, (2, 2, 5), 4], [3, (1, 3, 5), 5]]]
 
-        visualiser = PolyVisualiser(array_polygons=ret,
-                                    x_lim=container[0],
-                                    y_lim=container[1],
-                                    z_lim=container[2],
-                                    # obj=obj,
-                                    alpha=.5
-                                    )
+        ret = []
+        for i, box in enumerate(boxes):
+            color_b = np.random.rand(1, 3)
+            rotated_box = list(permutations(box.get('dim')))
+            for j in range(box.get('qtd')):
+                sol = solutions[i][j]
+                r = rotated_box[sol[2]]
+                r = Retangulo(vertex=r, color=color_b)
+                r.change_vertex(list(sol[1]))
+                ret.append(r)
 
-        visualiser.animate(no_animation=False)
-        visualiser.scrol()
-        visualiser.show()
+        ret.sort(key=lambda x: max(x.vertex[2]), reverse=True)
+
+        file_write_list = open('retangulos_' + filename, 'wb')
+        pickle.dump(ret, file_write_list)
+
+        # visualiser = PolyVisualiser(array_polygons=ret,
+        #                             x_lim=container[0],
+        #                             y_lim=container[1],
+        #                             z_lim=container[2],
+        #                             # obj=obj,
+        #                             alpha=1,
+        #                             )
+        #
+        # visualiser.animate(no_animation=False)
+        # visualiser.scrol()
+        # visualiser.show()
 
 
 if __name__ == "__main__":
