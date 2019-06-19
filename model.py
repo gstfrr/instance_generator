@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pickle
 import platform
-# from polygons_visualiser import PolyVisualiser
+from polygons_visualiser import PolyVisualiser
 from retangulo import Retangulo
 from itertools import permutations
 import numpy as np
@@ -26,15 +26,15 @@ def get_data(datafile: str) -> list:
     return boxes
 
 
-def main():
+def main(instance):
     print("Server: " + str(platform.node()) + "\n")
-    Lu, Wu, Hu = 10, 10, 10
-    container = [Lu, Wu, Hu]
 
     # Obtem os valores do arquivo e cria os retângulos
-    filename = 'problema1.data'
+    # filename = 'problema1.data'
+    filename = instance
     boxes = get_data(filename)
     filename = filename.replace('.data', '', 1)
+    filename = filename.replace('instances/', '', 1)
     print(filename)
 
     # Cria os conjuntos X,Y,Z
@@ -54,6 +54,10 @@ def main():
         BigX.append(p)
         BigY.append(q)
         BigZ.append(r)
+
+    Lu, Wu, Hu = max(BigX), max(BigY), max(BigZ)
+    print(max(BigX), max(BigY), max(BigZ))
+    container = [Lu, Wu, Hu]
 
     BigX = [i for i in range(sum(BigX))]
     BigY = [i for i in range(sum(BigY))]
@@ -168,12 +172,12 @@ def main():
 
     print(' = Restrições 4,5,6 adicionadas')
 
-    m.write('modelo_' + filename + '.lp')
+    m.write('models/modelo_' + filename + '.lp')
     print(' = Model written!')
-    # m.optimize()
+    m.optimize()
 
     if m.status == GRB.Status.OPTIMAL:
-        m.write('resultado_' + filename + '.sol')
+        m.write('results/resultado_' + filename + '.sol')
 
         print('\nFunção objetivo: ', str(round(L.X)), str(round(W.X)), str(round(W.X)), sep='\t')
 
@@ -205,7 +209,7 @@ def main():
 
         ret.sort(key=lambda x: max(x.vertex[2]), reverse=True)
 
-        file_write_list = open('retangulos_' + filename, 'wb')
+        file_write_list = open('results/retangulos_' + filename + '.bin', 'wb')
         pickle.dump(ret, file_write_list)
 
         # visualiser = PolyVisualiser(array_polygons=ret,
@@ -213,7 +217,7 @@ def main():
         #                             y_lim=container[1],
         #                             z_lim=container[2],
         #                             # obj=obj,
-        #                             alpha=1,
+        #                             alpha=.5,
         #                             )
         #
         # visualiser.animate(no_animation=False)
@@ -222,4 +226,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    instancia = sys.argv[1]
+    nome_saida = 'results/saida_model_' + instancia.replace('.data', '')
+    nome_saida = nome_saida.replace('instances/', '')
+    sys.stdout = open(nome_saida + '.txt', "w")
+    main(instancia)
