@@ -2,7 +2,7 @@
 import pickle
 import platform
 # from polygons_visualiser import PolyVisualiser
-# from retangulo import Retangulo
+from retangulo import Retangulo
 from itertools import permutations
 import numpy as np
 from gurobipy import *
