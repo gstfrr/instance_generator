@@ -66,7 +66,7 @@ def main(instance):
     # print(BigX, BigY, BigZ, sep='\n')
 
     m = Model("3D-ODRPP")
-    m.setParam('TimeLimit', 50 * 60.0)
+    m.setParam('TimeLimit', 6 * 3600.0)
 
     L = m.addVar(vtype=GRB.CONTINUOUS, name="L", lb=0, ub=GRB.INFINITY)
     W = m.addVar(vtype=GRB.CONTINUOUS, name="W", lb=0, ub=GRB.INFINITY)
