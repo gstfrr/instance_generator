@@ -8,22 +8,27 @@ import numpy as np
 from gurobipy import *
 
 
-def get_data(datafile: str) -> list:
+def get_data(datafile):
     filename = datafile
     file_open_list = open(filename, 'r')
 
     boxes = []
     for line in file_open_list:
         b = [int(i) for i in line.split(sep='\t')]
-        # dim = list(permutations(b[1:4]))
+        boxes.append(b)
+
+    Lu, Wu, Hu = boxes[-1][0], boxes[-1][1], boxes[-1][2]
+    boxes.pop()
+
+    boxes2 = []
+    for b in boxes:
         dim = b[1:4]
         b = {'type': b[0],
              'dim': dim,
              'qtd': b[4]}
-        # for i in range(num):
-        boxes.append(b)
+        boxes2.append(b)
 
-    return boxes
+    return boxes2, Lu, Wu, Hu
 
 
 def main(instance):
@@ -32,7 +37,7 @@ def main(instance):
     # Obtem os valores do arquivo e cria os retângulos
     # filename = 'problema1.data'
     filename = instance
-    boxes = get_data(filename)
+    boxes, Lu, Wu, Hu = get_data(filename)
     filename = filename.replace('.data', '', 1)
     filename = filename.replace('instances/', '', 1)
     print(filename)
@@ -55,8 +60,6 @@ def main(instance):
         BigY.append(q)
         BigZ.append(r)
 
-    Lu, Wu, Hu = max(BigX), max(BigY), max(BigZ)
-    print(max(BigX), max(BigY), max(BigZ))
     container = [Lu, Wu, Hu]
 
     BigX = [i for i in range(sum(BigX))]
