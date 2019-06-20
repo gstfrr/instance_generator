@@ -233,5 +233,5 @@ if __name__ == "__main__":
     # instancia = 'instances/problema1.data'
     nome_saida = 'results/saida_model_' + instancia.replace('.data', '')
     nome_saida = nome_saida.replace('instances/', '')
-    sys.stdout = open(nome_saida + '.txt', "w")
+    # sys.stdout = open(nome_saida + '.txt', "w")
     main(instancia)
