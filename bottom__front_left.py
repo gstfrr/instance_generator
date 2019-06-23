@@ -1,11 +1,5 @@
 import numpy as np
 
-OPT_X = 1
-OPT_y = 2
-OPT_Z = 3
-OPT_V = 4
-
-
 def get_max_x(p):
     return max(p.vertex[0])
 
@@ -29,7 +23,7 @@ def get_obj(pols):
 
 def optimize(polygons, container):
     solutions = []
-    for i in range(4):
+    for i in range(8):
         sol = optimizer(polygons, container, sort_mode=i)
         obj = get_obj(sol)
         solutions.append([sol, obj])
@@ -42,15 +36,6 @@ def optimize(polygons, container):
 def optimizer(polygons, container, sort_mode=0):
     width, length = container[0], container[1]
 
-    if sort_mode == 0:
-        polygons.sort(key=get_max_x, reverse=False)
-    elif sort_mode == 1:
-        polygons.sort(key=get_max_y, reverse=False)
-    elif sort_mode == 2:
-        polygons.sort(key=get_max_z, reverse=False)
-    elif sort_mode == 3:
-        polygons.sort(key=lambda p: p.volume, reverse=False)
-
     for pol in polygons:
         # print(type(pol))
         x, y, z = get_max_x(pol), get_max_y(pol), get_max_z(pol)
@@ -61,6 +46,23 @@ def optimizer(polygons, container, sort_mode=0):
             pol.rotate(np.pi / 2, 0)
 
         pol.move_to_origin()
+
+    if sort_mode == 0:
+        polygons.sort(key=get_max_x, reverse=True)
+    elif sort_mode == 1:
+        polygons.sort(key=get_max_x, reverse=False)
+    elif sort_mode == 2:
+        polygons.sort(key=get_max_y, reverse=True)
+    elif sort_mode == 3:
+        polygons.sort(key=get_max_y, reverse=False)
+    elif sort_mode == 4:
+        polygons.sort(key=get_max_z, reverse=True)
+    elif sort_mode == 5:
+        polygons.sort(key=get_max_z, reverse=False)
+    elif sort_mode == 6:
+        polygons.sort(key=lambda p: p.volume, reverse=True)
+    elif sort_mode == 7:
+        polygons.sort(key=lambda p: p.volume, reverse=False)
 
     xmax, ymax, zmax = 0, 0, 0
     ylist, zlist = [], []
