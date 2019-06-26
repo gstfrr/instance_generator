@@ -61,7 +61,7 @@ def main(instance):
     BigY = [i for i in range(sum(BigY))]
     BigZ = [i for i in range(sum(BigZ))]
 
-    m = Model('3D-ODRPP')
+    m = Model('3D-ODRPP_' + filename)
 
     L = m.addVar(vtype=GRB.CONTINUOUS, name="L", lb=0, ub=GRB.INFINITY)
     W = m.addVar(vtype=GRB.CONTINUOUS, name="W", lb=0, ub=GRB.INFINITY)
