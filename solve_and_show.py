@@ -43,7 +43,7 @@ def main(instance, model_file):
 
     m = read(model_file)
     print('Problema: ' + m.getAttr('modelName'))
-    m.setParam('TimeLimit', .1 * 3600.0)
+    m.setParam('TimeLimit', 1 * 3600.0)
 
     vars = m.getVars()
     z_obj, L, W, H = vars[0], vars[1], vars[2], vars[3]
