@@ -42,6 +42,7 @@ def main(instance, model_file):
     print(filename)
 
     m = read(model_file)
+    print('Problema: ' + m.getAttr('modelName'))
     m.setParam('TimeLimit', .1 * 3600.0)
 
     vars = m.getVars()
