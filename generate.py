@@ -12,9 +12,9 @@ def main():
     y_lim = [y_min, y_max]
     z_lim = [z_min, z_max]
 
-    filename = 'listpoly.txt'
+    filename = 'listpoly_perfect.txt'
 
-    num_seeds = 40
+    num_seeds = 60
     seeds = np.random.rand(num_seeds, 3) * scale
     # seeds = np.array([[1.89493127, 4.09108527, 1.83570894],
     #                   [1.79324889, 2.50682833, 1.13780362],
