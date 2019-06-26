@@ -15,13 +15,14 @@ class PolyVisualiser:
         :param obj: (opcional) Valor da função objetivo a ser exibido.
     """
 
-    def __init__(self, array_polygons, x_lim, y_lim, z_lim, obj=0,alpha=.5):
+    def __init__(self, array_polygons, x_lim, y_lim, z_lim, obj=0, alpha=.5, title='Visualizador'):
         self.__array_polygons = array_polygons
         self.__x_lim = x_lim
         self.__y_lim = y_lim
         self.__z_lim = z_lim
         self.__obj = obj
-        self.__fig = plt.figure(figsize=(9, 6.5))
+        self.__title = title
+        self.__fig = plt.figure(figsize=(9, 6.5), num=self.__title)
         self.alpha = alpha
         self.__line_ani = None
 
@@ -31,9 +32,7 @@ class PolyVisualiser:
 
         self.__ax = self.__fig.add_subplot(111,
                                            projection='3d',
-                                           aspect='auto'
                                            )
-
         self.new_scene()
 
     def new_scene(self):
