@@ -76,7 +76,6 @@ def main(instance, model_file):
                     for r in Z[i]:
                         index = 'X_' + '{}_{}_{}_{}_{}'.format(i, k, p, q, r)
                         x = m.getVarByName(index)
-                        print(index)
                         r_list.append(x)
                     q_list.append(r_list)
                 p_list.append(q_list)
@@ -125,6 +124,7 @@ def main(instance, model_file):
                                     z_lim=container[2],
                                     # obj=obj,
                                     alpha=.8,
+                                    title=filename,
                                     )
 
         visualiser.animate(no_animation=False)
