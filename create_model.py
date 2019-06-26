@@ -30,7 +30,7 @@ def get_data(datafile):
 
 
 def main(instance):
-    print("Server: " + str(platform.node()) + "\n")
+    print('Server: ' + str(platform.node()) + '\n')
 
     # Obtem os valores do arquivo e cria os retângulos
     filename = instance
@@ -61,7 +61,7 @@ def main(instance):
     BigY = [i for i in range(sum(BigY))]
     BigZ = [i for i in range(sum(BigZ))]
 
-    m = Model("3D-ODRPP")
+    m = Model('3D-ODRPP')
 
     L = m.addVar(vtype=GRB.CONTINUOUS, name="L", lb=0, ub=GRB.INFINITY)
     W = m.addVar(vtype=GRB.CONTINUOUS, name="W", lb=0, ub=GRB.INFINITY)
@@ -69,7 +69,7 @@ def main(instance):
 
     z_obj = m.addVar(vtype=GRB.CONTINUOUS, name="Z", lb=0, ub=GRB.INFINITY)
 
-    m.addConstr(z_obj == L + W + H, "z_objective")
+    m.addConstr(z_obj == L + W + H, 'z_obj')
 
     m.setObjective(z_obj, GRB.MINIMIZE)
 
@@ -100,7 +100,7 @@ def main(instance):
                 for q in Y[i]:
                     r_list = []
                     for r in Z[i]:
-                        index = '[' + str(i) + '][' + str(k) + '][' + str(p) + '][' + str(q) + '][' + str(r) + ']'
+                        index = '{}_{}_{}_{}_{}'.format(i, k, p, q, r)
                         x = m.addVar(vtype=GRB.BINARY, name='X_' + index)
                         r_list.append(x)
                     q_list.append(r_list)
@@ -130,10 +130,10 @@ def main(instance):
                                                 soma_r2 += x_bin[i][k][p][q][r]
 
                     # index = str(i)
-                index = '[' + str(s) + '][' + str(t) + '][' + str(u) + ']'
-                m.addConstr(soma_r2 <= 1, name='Restricao2_' + index)
+                index = '{}_{}_{}'.format(s, t, u)
+                m.addConstr(soma_r2 <= 1, name='C2_' + index)
 
-    print(' = Constraint 2 adicionada')
+    print(' = Constraint 2 added')
 
     # Constraint 3
     for j, box in enumerate(boxes, start=0):
@@ -145,9 +145,9 @@ def main(instance):
                 for q in Y[j]:
                     for r in Z[j]:
                         soma_r3 += x_bin[j][k][p][q][r]
-        m.addConstr(soma_r3 == bj, name='Restricao3_' + str(j))
+        m.addConstr(soma_r3 == bj, name='C3_' + str(j))
 
-    print(' = Constraint 3 adicionada')
+    print(' = Constraint 3 added')
 
     # Restrições 4, 5 e 6
     for i, box in enumerate(boxes, start=0):
@@ -156,18 +156,19 @@ def main(instance):
             for p in X[i]:
                 for q in Y[i]:
                     for r in Z[i]:
-                        index = '[' + str(i) + '][' + str(k) + '][' + str(p) + '][' + str(q) + '][' + str(r) + ']'
+                        index = '{}_{}_{}_{}_{}'.format(i, k, p, q, r)
                         li, wi, hi = b[0], b[1], b[2]
                         algo_p = (p + li) * x_bin[i][k][p][q][r]
                         algo_q = (q + wi) * x_bin[i][k][p][q][r]
                         algo_r = (r + hi) * x_bin[i][k][p][q][r]
-                        m.addConstr(algo_p <= L, name='Restricao4_' + index)
-                        m.addConstr(algo_q <= W, name='Restricao5_' + index)
-                        m.addConstr(algo_r <= H, name='Restricao6_' + index)
+                        m.addConstr(algo_p <= L, name='C4_' + index)
+                        m.addConstr(algo_q <= W, name='C5_' + index)
+                        m.addConstr(algo_r <= H, name='C6_' + index)
 
-    print(' = Restrições 4,5,6 adicionadas')
+    print(' = Constraints 4,5,6 added')
 
     m.write('models/modelo_' + filename + '.lp')
+    # m.write('models/modelo_' + filename + '.mps')
     print(' = Model written!')
 
 

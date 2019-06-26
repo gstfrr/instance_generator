@@ -73,9 +73,9 @@ def main(instance, model_file):
                 for q in Y[i]:
                     r_list = []
                     for r in Z[i]:
-                        index = 'X_[' + str(i) + '][' + str(k) + '][' + str(p) + '][' + str(q) + '][' + str(r) + ']'
+                        index = 'X_' + '{}_{}_{}_{}_{}'.format(i, k, p, q, r)
                         x = m.getVarByName(index)
-                        print(x.X)
+                        print(index)
                         r_list.append(x)
                     q_list.append(r_list)
                 p_list.append(q_list)
@@ -123,7 +123,7 @@ def main(instance, model_file):
                                     y_lim=container[1],
                                     z_lim=container[2],
                                     # obj=obj,
-                                    alpha=.5,
+                                    alpha=.8,
                                     )
 
         visualiser.animate(no_animation=False)
