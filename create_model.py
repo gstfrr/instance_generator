@@ -63,8 +63,9 @@ def main(instance):
 
     m = Model('3D-ODRPP_' + filename)
 
-    L = m.addVar(vtype=GRB.CONTINUOUS, name="L", lb=0, ub=GRB.INFINITY)
-    W = m.addVar(vtype=GRB.CONTINUOUS, name="W", lb=0, ub=GRB.INFINITY)
+    L, W = Lu, Wu
+    # L = m.addVar(vtype=GRB.CONTINUOUS, name="L", lb=0, ub=GRB.INFINITY)
+    # W = m.addVar(vtype=GRB.CONTINUOUS, name="W", lb=0, ub=GRB.INFINITY)
     H = m.addVar(vtype=GRB.CONTINUOUS, name="H", lb=0, ub=GRB.INFINITY)
 
     z_obj = m.addVar(vtype=GRB.CONTINUOUS, name="Z", lb=0, ub=GRB.INFINITY)
@@ -167,7 +168,7 @@ def main(instance):
 
     print(' = Constraints 4,5,6 added')
 
-    m.write('models/modelo_' + filename + '.lp')
+    m.write('models/modelo_CUT_' + filename + '.lp')
     # m.write('models/modelo_' + filename + '.mps')
     print(' = Model written!')
 
