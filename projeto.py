@@ -8,9 +8,9 @@ import pickle
 
 
 def main():
-    container = [2.5, 2, 3]
+    container = [4,4,4]
 
-    filename = 'listpoly.txt'
+    filename = 'listpoly_perfect.txt'
     file_open_list = open(filename, 'rb')
 
     ret = pickle.load(file_open_list)
@@ -23,6 +23,7 @@ def main():
     #
     # ret = [r.Retangulo(i[0], color=i[1]) for i in paralel]
 
+    obj = 1
     ret, obj = optimize(ret, container)
     print(obj)
 
@@ -30,11 +31,12 @@ def main():
                                    x_lim=container[0],
                                    y_lim=container[1],
                                    z_lim=container[2],
-                                   obj=obj
+                                   obj=obj,
+                                   alpha=.8
                                    )
 
-    visualiser.animate(no_animation=False)
-    visualiser.scrol()
+    visualiser.animate(no_animation=True)
+    # visualiser.scrol()
     visualiser.show()
 
 
