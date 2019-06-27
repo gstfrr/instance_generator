@@ -63,14 +63,13 @@ def main(instance):
 
     m = Model('3D-ODRPP_' + filename)
 
-    L, W = Lu, Wu
-    # L = m.addVar(vtype=GRB.CONTINUOUS, name="L", lb=0, ub=GRB.INFINITY)
-    # W = m.addVar(vtype=GRB.CONTINUOUS, name="W", lb=0, ub=GRB.INFINITY)
+    L = m.addVar(vtype=GRB.CONTINUOUS, name="L", lb=0, ub=Lu)
+    W = m.addVar(vtype=GRB.CONTINUOUS, name="W", lb=0, ub=Wu)
     H = m.addVar(vtype=GRB.CONTINUOUS, name="H", lb=0, ub=GRB.INFINITY)
 
     z_obj = m.addVar(vtype=GRB.CONTINUOUS, name="Z", lb=0, ub=GRB.INFINITY)
 
-    m.addConstr(z_obj == L + W + H, 'z_obj')
+    m.addConstr(z_obj == H, 'z_obj')
 
     m.setObjective(z_obj, GRB.MINIMIZE)
 
