@@ -1,7 +1,7 @@
 instance_generator
 ===
 
-##Requirements
+## Requirements
 
 * [Pyvoro](https://github.com/wackywendell/pyvoro/) (forked by [wackywendell](wackywendell))
 * [Matplotlib](https://matplotlib.org/)
@@ -43,11 +43,11 @@ seeds = np.random.rand(num_seeds, 3) * scale
 # Passing arguments to constructor
 # Every argument is an integer/list of integers
 polygons = PolyGenerator(seeds=seeds,
-						x_lim=x_lim,
-						y_lim=y_lim,
-						z_lim=z_lim,
-						scale=scale
-						)
+			x_lim=x_lim,
+			y_lim=y_lim,
+			z_lim=z_lim,
+			scale=scale
+			)
 
 # This will return a list of objects of type Polygon
 ret = polygons.get_polygons()
