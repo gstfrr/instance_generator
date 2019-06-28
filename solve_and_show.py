@@ -87,7 +87,7 @@ def main(instance, model_file):
     if True:
         m.write('results/resultado_' + filename + '.sol')
         print('Container: ', Lu, Wu, Hu, sep='\t')
-        container = [L.X, W.X, H.X]
+        container = [Lu, Wu, z_obj.X]
         print('\nFunção objetivo: ', container[0], container[1], container[2], sep='\t')
 
         # Recupera as posições das caixas
@@ -136,5 +136,5 @@ if __name__ == "__main__":
     instancia = sys.argv[1]
     modelo = sys.argv[2]
     # instancia = 'instances/problema0.data'
-    # modelo = 'models/modelo_problema0.lp'
+    # modelo = 'models/modelo_CUT_problema0.lp'
     main(instancia, modelo)
