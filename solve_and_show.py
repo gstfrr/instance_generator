@@ -122,7 +122,7 @@ def main(instance, model_file):
                                     x_lim=container[0],
                                     y_lim=container[1],
                                     z_lim=container[2],
-                                    # obj=obj,
+                                    obj=container[2],
                                     alpha=.8,
                                     title=filename,
                                     )
