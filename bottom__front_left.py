@@ -1,4 +1,6 @@
 import numpy as np
+from copy import deepcopy
+
 
 def get_max_x(p):
     return max(p.vertex[0])
@@ -25,12 +27,12 @@ def optimize(polygons, container):
     solutions = []
     for i in range(8):
         sol = optimizer(polygons, container, sort_mode=i)
-        obj = get_obj(sol)
-        solutions.append([sol, obj])
-        print(i, obj)
+        solutions.append(deepcopy(sol))
+        print(i, get_obj(sol))
 
-    best = min(solutions, key=lambda x: x[1])
-    return best
+    best = min(solutions, key=get_obj)
+    print(best)
+    return best, get_obj(best)
 
 
 def optimizer(polygons, container, sort_mode=0):

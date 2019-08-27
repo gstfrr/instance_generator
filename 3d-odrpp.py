@@ -1,5 +1,5 @@
 from bottom__front_left import *
-# from polygons_visualiser import PolyVisualiser
+from polygons_visualiser import PolyVisualiser
 from retangulo import Retangulo
 from time import time
 import sys
@@ -37,28 +37,33 @@ def main(instancia):
         for i in range(b.get('qtd')):
             ret.append(Retangulo(b.get('dim'), color=color_i))
 
+    now = time()
     ret, obj = optimize(ret, container)
+    obj = get_obj(ret)
+    print('Time: ' + str(time() - now))
+
     print('Dimensoes: ', Lu, Wu, Hu)
     print('Função objetivo: ' + str(obj))
 
-    # visualiser = PolyVisualiser(array_polygons=ret,
-    #                             x_lim=container[0],
-    #                             y_lim=container[1],
-    #                             z_lim=container[2],
-    #                             obj=obj,
-    #                             alpha=.5
-    #                             )
-    #
-    # visualiser.animate(no_animation=False)
-    # visualiser.scrol()
-    # visualiser.show()
+    x_lim = max(Lu, Wu, obj)
+    y_lim = max(Lu, Wu, obj)
+    z_lim = max(Lu, Wu, obj)
+
+    visualiser = PolyVisualiser(array_polygons=ret,
+                                x_lim=x_lim,
+                                y_lim=y_lim,
+                                z_lim=z_lim,
+                                obj=obj,
+                                alpha=1,
+                                title=instancia,
+                                )
+
+    visualiser.animate(no_animation=False)
+    visualiser.scrol()
+    visualiser.show()
 
 
 if __name__ == "__main__":
-    now = time()
-    instancia = sys.argv[1]
-    nome_saida = 'results/saida_BFL_' + instancia.replace('.data', '')
-    nome_saida = nome_saida.replace('instances/', '')
-    sys.stdout = open(nome_saida + '.txt', "w")
+    # instancia = sys.argv[1]
+    instancia = 'instances/problema0.data'
     main(instancia)
-    print('Time: ' + str(time() - now))

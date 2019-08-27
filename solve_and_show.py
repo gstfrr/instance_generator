@@ -133,8 +133,8 @@ def main(instance, model_file):
 
 
 if __name__ == "__main__":
-    instancia = sys.argv[1]
-    modelo = sys.argv[2]
-    # instancia = 'instances/problema0.data'
-    # modelo = 'models/modelo_CUT_problema0.lp'
+    # instancia = sys.argv[1]
+    # modelo = sys.argv[2]
+    instancia = 'instances/problema0.data'
+    modelo = 'models/modelo_problema0.lp'
     main(instancia, modelo)

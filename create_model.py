@@ -173,6 +173,6 @@ def main(instance):
 
 
 if __name__ == "__main__":
-    instancia = sys.argv[1]
-    # instancia = 'instances/problema0.data'
+    # instancia = sys.argv[1]
+    instancia = 'instances/problema0.data'
     main(instancia)
