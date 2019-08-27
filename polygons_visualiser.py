@@ -23,7 +23,7 @@ class PolyVisualiser:
         self.__obj = obj
         self.__title = title
         self.__fig = plt.figure(figsize=(9, 6.5), num=self.__title)
-        self.alpha = alpha
+        self.__alpha = alpha
         self.__line_ani = None
 
         self.__sfreq = None
@@ -33,6 +33,8 @@ class PolyVisualiser:
         self.__ax = self.__fig.add_subplot(111,
                                            projection='3d',
                                            )
+        self.__ax.tick_params(direction='out', length=6, width=2, colors='r',
+               grid_color='r', grid_alpha=0.5,grid_linewidth=5)
         self.new_scene()
 
     def new_scene(self):
@@ -43,6 +45,11 @@ class PolyVisualiser:
                        (0, 0, 0, 0, self.__z_lim, self.__z_lim, self.__z_lim, self.__z_lim)
                        ]
         self.add_vertex(vertices=cube_vertex)
+
+    def update_polygons_alpha(self, val):
+        self.new_scene()
+        self.__alpha = self.__salpha.val
+        self.add_cell(vertex=False, faces=True)
 
     def update_polygons_height(self, val):
         self.new_scene()
@@ -60,16 +67,20 @@ class PolyVisualiser:
         pass
 
     def scrol(self):
-        axfreq = plt.axes([.15, .05, .75, 0.03], facecolor='b')
+        axfreq = plt.axes([.15, .05, .25, .03], facecolor='b')
         self.__sfreq = Slider(axfreq, 'Altura: ', -1.0, 1.0, valinit=0)
 
-        resetax = plt.axes([0.8, .015, 0.1, 0.03])
+        axtransp = plt.axes([.65, .05, .25, .03], facecolor='b')
+        self.__salpha = Slider(axtransp, 'Alpha: ', 0, 1.0, valinit=1)
+
+        resetax = plt.axes([.8, .015, 0.1, .03])
         self.__button = Button(resetax, 'Reset', color='r', hovercolor='0.975')
 
-        axbox = plt.axes([0.207, 0.015, 0.2, 0.03])
+        axbox = plt.axes([.207, .015, .2, .03])
         self.__text_box = TextBox(axbox, 'Função Objetivo: ', initial=str(self.__obj))
 
         self.__sfreq.on_changed(self.update_polygons_height)
+        self.__salpha.on_changed(self.update_polygons_alpha)
         self.__button.on_clicked(self.reset)
         self.__text_box.on_submit(None)
 
@@ -103,7 +114,7 @@ class PolyVisualiser:
         augusto = [*zip(*augusto)]
         x, y, z = augusto
         verts2 = [list(zip(x, y, z))]
-        collection = Poly3DCollection(verts2, alpha=self.alpha)
+        collection = Poly3DCollection(verts2, alpha=self.__alpha)
         collection.set_facecolor(color)
         collection.set_edgecolor('k')
         self.__ax.add_collection3d(collection, zs=0, zdir='z')
