@@ -34,7 +34,7 @@ class PolyVisualiser:
                                            projection='3d',
                                            )
         self.__ax.tick_params(direction='out', length=6, width=2, colors='r',
-               grid_color='r', grid_alpha=0.5,grid_linewidth=5)
+                              grid_color='r', grid_alpha=0.5, grid_linewidth=5)
         self.new_scene()
 
     def new_scene(self):
@@ -101,6 +101,29 @@ class PolyVisualiser:
             marker='.',
             alpha=0
         )
+
+    def add_plane(self, a, b, c):
+        points = [a, b, c]
+
+        p0, p1, p2 = points
+        x0, y0, z0 = p0
+        x1, y1, z1 = p1
+        x2, y2, z2 = p2
+        ux, uy, uz = [x1 - x0, y1 - y0, z1 - z0]
+        vx, vy, vz = [x2 - x0, y2 - y0, z2 - z0]
+        u_cross_v = [uy * vz - uz * vy, uz * vx - ux * vz, ux * vy - uy * vx]
+        point = np.array(p0)
+        normal = np.array(u_cross_v)
+        d = -point.dot(normal)
+        xx, yy = np.meshgrid(range(20), range(20))
+
+        z = (-normal[0] * xx - normal[1] * yy - d) * 1. / normal[2]
+
+        self.__ax.plot_surface(xx, yy, z, color='r', shade=False, alpha=.5)
+
+        self.__ax.scatter(a[0], a[1], a[2])
+        self.__ax.scatter(b[0], b[1], b[2])
+        self.__ax.scatter(c[0], c[1], c[2])
 
     def add_faces(self, vertices, faces, color):
         vertices = [*zip(*vertices)]
